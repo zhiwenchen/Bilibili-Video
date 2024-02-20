@@ -8,17 +8,18 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.zhiwen.bilibilivideo.databinding.LayoutFragmentHomeBinding
+import com.zhiwen.bilibilivideo.ext.ViewBindingDelegate
 
 
 class HomeFragment:BaseFragment() {
 
-    private lateinit var homeBinding: LayoutFragmentHomeBinding
+    private val homeBinding: LayoutFragmentHomeBinding by ViewBindingDelegate(LayoutFragmentHomeBinding::inflate)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeBinding = LayoutFragmentHomeBinding.inflate(inflater)
+//        homeBinding = LayoutFragmentHomeBinding.inflate(inflater)
         return homeBinding.root
     }
 
