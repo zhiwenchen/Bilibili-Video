@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BiliBili Video</string>
+    <string name="loading_status_empty_no_data_text">虽然什么也没有</string>
+</resources>

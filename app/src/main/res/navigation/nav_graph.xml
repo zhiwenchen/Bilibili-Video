@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.zhiwen.bilibilivideo.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_tagsFragment"
+            app:destination="@id/tagsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tagsFragment"
+        android:name="com.zhiwen.bilibilivideo.TagsFragment"
+        android:label="TagsFragment" >
+        <action
+            android:id="@+id/action_tagsFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.zhiwen.bilibilivideo.UserFragment"
+        android:label="UserFragment" />
+</navigation>
