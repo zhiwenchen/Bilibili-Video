@@ -10,9 +10,8 @@ import kotlin.reflect.KProperty
 
 
 // 创建Fragment的委托
-// 返回值
-//fun <T: ViewBinding>
-
+// <>定义的是泛型
+fun <T: ViewBinding> invokeViewBinding(bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> T) = ViewBindingDelegate<T>(bindingInflater)
 
 // 定义委托类
 // 第一个泛型，表示这个属性是哪个类的，这里是Fragment类的
@@ -23,6 +22,7 @@ class ViewBindingDelegate<VB:ViewBinding>(
 ): ReadOnlyProperty<Fragment, VB> {
 
     override fun getValue(thisRef: Fragment, property: KProperty<*>): VB {
+        // 改造成自动获取
         logd("getValue")
         return bindingInflater(thisRef.layoutInflater,null, false)
     }
