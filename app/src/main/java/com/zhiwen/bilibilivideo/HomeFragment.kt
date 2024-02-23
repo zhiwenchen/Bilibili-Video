@@ -6,14 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.zhiwen.bilibilivideo.databinding.LayoutFragmentHomeBinding
 import com.zhiwen.bilibilivideo.ext.invokeViewBinding
+import com.zhiwen.bilibilivideo.http.ApiService
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 
 class HomeFragment:BaseFragment() {
 
     private val homeBinding: LayoutFragmentHomeBinding by invokeViewBinding(LayoutFragmentHomeBinding::inflate)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            ApiService.getService().queryHotFeedsList()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
