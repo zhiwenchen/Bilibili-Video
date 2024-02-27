@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface ApiInterface {
 
     @GET("feeds/queryHotFeedsList")
-    suspend fun queryHotFeedsList(
-        @Query("feedId") feedId: Int = 0,
+    suspend fun getFeeds(
+        @Query("feedId") feedId: Long = 0,
         @Query("feedType") feedType: String = "all",
         @Query("pageCount") pageCount: Int = 10,
         @Query("userId") userId: Int = 0
@@ -17,7 +17,7 @@ interface ApiInterface {
 
     // 如果不加suspend前缀，则需要返回Call对象
 //    @GET("feeds/queryHotFeedsList")
-//    fun queryHotFeedsList(
+//    fun getFeeds(
 //        @Query("feedId") feedId: Int = 0,
 //        @Query("feedType") feedType: String = "all",
 //        @Query("pageCount") pageCount: Int = 10,

@@ -4,4 +4,6 @@ data class ApiResult<T>(
     var status: Int = 0,
     var message: String = "",
     var responseBody: T? = null
-)
+) {
+    fun isSuccess() = status == 200
+}

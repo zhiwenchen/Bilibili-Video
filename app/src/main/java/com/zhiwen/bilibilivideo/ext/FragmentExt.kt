@@ -1,19 +1,29 @@
 package com.zhiwen.bilibilivideo.ext
 
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.zhiwen.bilibilivideo.logd
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+
+inline fun<reified VM: ViewModel> invokeViewModel() = ViewModelDelegate<VM>(VM::class.java)
+
+class ViewModelDelegate<VM:ViewModel>(private val clazz: Class<VM>) : ReadOnlyProperty<Fragment, VM>{
+
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): VM {
+        return ViewModelProvider(thisRef, ViewModelProvider.NewInstanceFactory())[clazz]
+    }
+
+}
 
 
 // 创建Fragment的委托
 // <>定义的是泛型
-inline fun <reified T: ViewBinding> invokeViewBinding() = ViewBindingDelegate<T>(T::class.java)
+inline fun <reified T: ViewBinding> Fragment.invokeViewBinding() = ViewBindingDelegate<T>(T::class.java)
 
 // 定义委托类
 // 第一个泛型，表示这个属性是哪个类的，这里是Fragment类的
