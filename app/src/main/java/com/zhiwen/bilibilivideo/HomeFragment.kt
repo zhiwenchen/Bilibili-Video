@@ -17,12 +17,14 @@ import kotlin.concurrent.thread
 
 class HomeFragment:BaseFragment() {
 
-    private val homeBinding: LayoutFragmentHomeBinding by invokeViewBinding(LayoutFragmentHomeBinding::inflate)
+    private val homeBinding: LayoutFragmentHomeBinding by invokeViewBinding()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            ApiService.getService().queryHotFeedsList()
+//            val apiResult = ApiService.getService().queryHotFeedsList()
+//            println(111)
+//            apiResult
         }
     }
 
