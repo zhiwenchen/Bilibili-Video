@@ -4,15 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.*
+import com.zhiwen.bilibilivideo.ext.setImageUrl
 import com.zhiwen.bilibilivideo.ext.setTextVisibility
-import com.zhiwen.bilibilivideo.model.Feed
-import com.zhiwen.bilibilivideo.model.TYPE_IMAGE_TEXT
+import com.zhiwen.bilibilivideo.model.*
 
 class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: DiffUtil.ItemCallback<Feed>() {
     override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
@@ -32,7 +31,12 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
     //
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val feed = getItem(position) ?: return
+        holder.bindFeedAuthor(feed.author)
         holder.bindFeedContent(feed.feedsText)
+        holder.bindFeedImage(feed.cover)
+        holder.bindFeedComment(feed.topComment)
+        holder.bindFeedLabel(feed.activityText)
+        holder.bindFeedInteraction(feed.ugc)
     }
 
     //
@@ -56,8 +60,40 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
         private val interactionBinding =
             LayoutFeedInteractionBinding.bind(itemView.findViewById(R.id.feed_interaction))
 
+        fun bindFeedAuthor(author: Author?) {
+            authorBinding.authorName.text = author?.name
+            authorBinding.authorAvatar.setImageUrl(author?.avatar, isCircle = true)
+        }
+
         fun bindFeedContent(feedsText: String?) {
             feedTextBinding.root.setTextVisibility(feedsText)
+        }
+
+        fun bindFeedImage(cover: String?) {
+            feedImage?.setImageUrl(cover)
+        }
+
+        fun bindFeedLabel(activityText: String?) {
+            labelBinding.root.text = activityText
+        }
+
+        fun bindFeedComment(topComment: TopComment?) {
+            topComment?.run {
+                commentBinding.commentAvatar.setImageUrl(author?.avatar)
+                commentBinding.commentAuthor.text = author?.name
+                commentBinding.commentText.text = commentText
+                commentBinding.commentLikeCount.text = topComment.commentCount.toString()
+                commentBinding.commentLikeStatus.setImageResource(if (topComment.hasLiked) R.drawable.icon_cell_liked else R.drawable.icon_cell_like)
+//                commentBinding.commentPreview
+            }
+        }
+
+        fun bindFeedInteraction(ugc: Ugc?) {
+            ugc?.run {
+                interactionBinding.interactionComment.text = commentCount.toString()
+                interactionBinding.interactionLike.setIconResource(if (hasLiked) R.drawable.icon_cell_liked else R.drawable.icon_cell_like)
+                interactionBinding.interactionDiss.setIconResource(if (hasdiss) R.drawable.icon_cell_dissed else R.drawable.icon_cell_diss)
+            }
         }
     }
 

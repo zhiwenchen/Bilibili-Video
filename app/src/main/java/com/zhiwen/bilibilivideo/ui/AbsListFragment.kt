@@ -50,7 +50,7 @@ open class AbsListFragment : Fragment() {
         lifecycleScope.launch{
             feedAdapter.onPagesUpdatedFlow.collect{
                 if (feedAdapter.itemCount > 0) {
-
+                    viewBinding.refreshLayout.isRefreshing = false
                 }
             }
         }
