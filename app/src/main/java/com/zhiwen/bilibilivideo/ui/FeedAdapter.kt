@@ -92,7 +92,11 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
             ugc?.run {
                 interactionBinding.interactionComment.text = commentCount.toString()
                 interactionBinding.interactionLike.setIconResource(if (hasLiked) R.drawable.icon_cell_liked else R.drawable.icon_cell_like)
+//                if ()
+//                interactionBinding.interactionLike.text()
+                interactionBinding.interactionLike.setIconTintResource(if (hasLiked) R.color.color_theme else R.color.color_3d3)
                 interactionBinding.interactionDiss.setIconResource(if (hasdiss) R.drawable.icon_cell_dissed else R.drawable.icon_cell_diss)
+                interactionBinding.interactionDiss.setIconTintResource(if (hasLiked) R.color.color_theme else R.color.color_3d3)
             }
         }
     }
