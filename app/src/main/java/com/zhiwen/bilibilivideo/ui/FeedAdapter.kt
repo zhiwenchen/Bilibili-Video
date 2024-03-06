@@ -46,6 +46,17 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
         return FeedViewHolder(LayoutInflater.from(parent.context).inflate(layoutResId,parent,false))
     }
 
+    // 列表项可见时调用，此时添加视频自动播放检测器
+    override fun onViewAttachedToWindow(holder: FeedViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        //
+    }
+
+//    列表项被移除屏幕时调用，此时移除监听
+    override fun onViewDetachedFromWindow(holder: FeedViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+    }
+
     // 做一个缓存
     inner class FeedViewHolder(itemView: View):ViewHolder(itemView){
         private val authorBinding =

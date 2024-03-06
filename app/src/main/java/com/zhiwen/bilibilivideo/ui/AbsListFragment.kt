@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.LayoutAbsListFragmentBinding
 import com.zhiwen.bilibilivideo.ext.invokeViewBinding
+import com.zhiwen.bilibilivideo.logd
 import com.zhiwen.bilibilivideo.model.Feed
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -49,8 +50,15 @@ open class AbsListFragment : Fragment() {
 
         lifecycleScope.launch{
             feedAdapter.onPagesUpdatedFlow.collect{
-                if (feedAdapter.itemCount > 0) {
-                    viewBinding.refreshLayout.isRefreshing = false
+                val hasData = feedAdapter.itemCount > 0
+                logd("hasData:$hasData")
+                viewBinding.refreshLayout.isRefreshing = false
+                if (hasData) {
+
+                } else {
+                    viewBinding.loadingStatus.showEmpty() {
+                        feedAdapter.retry()
+                    }
                 }
             }
         }

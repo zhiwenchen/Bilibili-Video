@@ -1,4 +1,4 @@
-package com.zhiwen.bilibilivideo.ui.exoplayer
+package com.zhiwen.bilibilivideo.exoplayer
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,7 +9,7 @@ import com.zhiwen.bilibilivideo.databinding.LayoutListWrapperPlayerViewBinding
 class WrapperPlayerView(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
     FrameLayout(context, attrs, defStyleAttr) {
 
-        val viewBinding = LayoutListWrapperPlayerViewBinding.inflate(LayoutInflater.from(context),this)
+    val viewBinding = LayoutListWrapperPlayerViewBinding.inflate(LayoutInflater.from(context), this)
 
 
 }

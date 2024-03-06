@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zhiwen.bilibilivideo.http.ApiResult
 import com.zhiwen.bilibilivideo.http.ApiService
+import com.zhiwen.bilibilivideo.logd
 import com.zhiwen.bilibilivideo.model.Feed
 
 
@@ -14,6 +15,7 @@ class FeedPagingSource:PagingSource<Long, Feed>() {
     }
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Feed> {
+        logd("params.key: $params.key")
         val result =
             kotlin.runCatching { ApiService.getService().getFeeds(feedId = params.key ?: 0L) }
         val apiResult = result.getOrDefault(ApiResult())

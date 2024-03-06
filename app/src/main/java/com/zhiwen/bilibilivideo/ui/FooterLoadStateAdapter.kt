@@ -8,12 +8,14 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.LayoutAbsListLoadingFooterBinding
+import com.zhiwen.bilibilivideo.logd
 
 class FooterLoadStateAdapter:LoadStateAdapter<FooterLoadStateAdapter.LoadStateViewHolder>() {
 
     override fun onBindViewHolder(holder: LoadStateViewHolder, loadState: LoadState) {
         val text = holder.binding.text
         val loading = holder.binding.loading
+        logd("loadState:$loadState")
         when (loadState) {
             is LoadState.Loading -> {
                 text.setText(R.string.abs_list_loading_footer_loading)

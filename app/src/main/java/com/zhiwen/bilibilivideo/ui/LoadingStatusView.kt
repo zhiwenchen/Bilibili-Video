@@ -3,6 +3,7 @@ package com.zhiwen.bilibilivideo.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import com.zhiwen.bilibilivideo.databinding.LayoutLoadingStatusViewBinding
@@ -20,6 +21,8 @@ class LoadingStatusView @JvmOverloads constructor(
         text: String? = null,
         clickListener: OnClickListener?
     ) {
+        binding.loading.hide()
+        binding.emptyLayout.visibility = View.VISIBLE
 //        if (resId != 0) {
 //            binding.loading.setImageResource(resId)
 //        }

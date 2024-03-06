@@ -17,6 +17,7 @@ class HomeFragment:AbsListFragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewModel.feed.collect{
+                logd("collect feed")
                 submitData(it)
             }
         }
