@@ -79,3 +79,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BiliBili Video"
 include ':app'
+include ':nav-plugin'
+include ':nav-plugin-runtime'

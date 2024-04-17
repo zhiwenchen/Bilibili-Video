@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+
+    implementation gradleApi()
+    implementation androidxLibs.bundles.nav.plugin
+//    implementation 'com.techme.jetpack:nav-plugin-runtime:1.0.0'
+}
