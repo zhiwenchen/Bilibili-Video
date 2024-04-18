@@ -18,7 +18,9 @@ import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.*
 import com.zhiwen.bilibilivideo.exoplayer.WrapperPlayerView
 import com.zhiwen.bilibilivideo.ext.load
+import com.zhiwen.bilibilivideo.ext.setImageResource
 import com.zhiwen.bilibilivideo.ext.setImageUrl
+import com.zhiwen.bilibilivideo.ext.setTextColor
 import com.zhiwen.bilibilivideo.ext.setTextVisibility
 import com.zhiwen.bilibilivideo.ext.setVisibility
 import com.zhiwen.bilibilivideo.model.*
@@ -153,11 +155,11 @@ class FeedAdapter constructor(private val lifecycleOwner: LifecycleOwner
                 playerView?.run {
                     setVisibility(true)
                     bindData(width, height, cover, url, maxHeight)
-//                    setListener(object : WrapperPlayerView.Listener {
-//                        override fun onTogglePlay(attachView: WrapperPlayerView) {
+                    setListener(object : WrapperPlayerView.Listener {
+                        override fun onTogglePlay(attachView: WrapperPlayerView) {
 //                            playDetector.togglePlay(attachView, url)
-//                        }
-//                    })
+                        }
+                    })
                 }
             }
         }
@@ -173,7 +175,17 @@ class FeedAdapter constructor(private val lifecycleOwner: LifecycleOwner
                 commentBinding.commentText.text = commentText
                 commentBinding.commentLikeCount.text = topComment.commentCount.toString()
                 commentBinding.commentLikeStatus.setImageResource(if (topComment.hasLiked) R.drawable.icon_cell_liked else R.drawable.icon_cell_like)
-//                commentBinding.commentPreview
+                commentBinding.commentPreviewVideoPlay.setVisibility(videoUrl != null)
+                commentBinding.commentLikeCount.setTextColor(
+                    hasLiked,
+                    R.color.color_theme,
+                    R.color.color_3d3
+                )
+                commentBinding.commentLikeStatus.setImageResource(
+                    hasLiked,
+                    R.drawable.icon_cell_liked,
+                    R.drawable.icon_cell_like
+                )
             }
         }
 

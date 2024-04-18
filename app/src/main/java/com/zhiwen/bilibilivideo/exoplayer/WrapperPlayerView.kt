@@ -4,8 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.google.android.exoplayer2.Player
+import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.LayoutListWrapperPlayerViewBinding
 import com.zhiwen.bilibilivideo.ext.setBlurImageUrl
 import com.zhiwen.bilibilivideo.ext.setImageUrl
@@ -19,16 +23,25 @@ import com.zhiwen.bilibilivideo.util.PixUtil
 class WrapperPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int = 0, defStyleRes: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
 
+    interface Listener {
+        fun onTogglePlay(attachView: WrapperPlayerView)
+    }
+    private var pageListPlayer = PageListPlayer()
+    private var callback: Listener? = null
+    private var videoUrl:String? = null
+
     val viewBinding = LayoutListWrapperPlayerViewBinding.inflate(LayoutInflater.from(context), this)
 
     init {
         viewBinding.playBtn.setOnClickListener {
+            videoUrl?.let { it1 -> pageListPlayer.togglePlay(this, it1) }
 //            callback?.onTogglePlay(this)
         }
     }
 
     fun bindData(widthPx: Int, heightPx: Int, coverUrl: String?, videoUrl: String, maxHeight: Int) {
         // 1、根据视频的widthPx,heightPx 动态计算出cover、 blur 以及wrapperView的宽高
+        this.videoUrl = videoUrl
 
         viewBinding.cover.setImageUrl(coverUrl)
 
@@ -75,5 +88,60 @@ class WrapperPlayerView @JvmOverloads constructor(context: Context, attrs: Attri
         coverParams.gravity = Gravity.CENTER
         viewBinding.cover.scaleType = ImageView.ScaleType.FIT_CENTER
         viewBinding.cover.layoutParams = coverParams
+    }
+
+    fun setListener(callback: Listener) {
+        this.callback = callback
+    }
+
+    // 开始播放，把播放器和播放控制器添加到WrapperPlayerView中
+    fun onActive(playerView: View, controllerView: View) {
+        val parent = playerView.parent
+        if (parent != this) {
+            if (parent != null) {
+                (parent as ViewGroup).removeView(playerView)
+            }
+            val coverParams = viewBinding.cover.layoutParams
+            this.addView(playerView, 1, coverParams)
+        }
+
+        val ctrlParent = controllerView.parent
+        if (ctrlParent != this) {
+            if (ctrlParent != null) {
+                (ctrlParent as ViewGroup).removeView(controllerView)
+            }
+            val ctrlParams = LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            ctrlParams.gravity = Gravity.BOTTOM
+            this.addView(controllerView, ctrlParams)
+        }
+    }
+
+    fun inActive() {
+        viewBinding.cover.setVisibility(true)
+        viewBinding.playBtn.setVisibility(true)
+        viewBinding.playBtn.setImageResource(R.drawable.icon_video_play)
+    }
+
+    fun onControllerVisibilityChange(visibility: Int, playEnd: Boolean) {
+        viewBinding.playBtn.setVisibility(if (playEnd) true else visibility == View.VISIBLE)
+    }
+
+    // 开始播放的时候把原本的预览封面和播放按钮隐藏，显示播放器和控制器
+    // 暂停播放的时候再把预览页面显示出来
+    fun onPlayerStateChanged(playing: Boolean, playbackState: Int) {
+        if (playing) {
+            viewBinding.cover.setVisibility(false)
+            viewBinding.bufferView.setVisibility(false)
+            viewBinding.playBtn.setVisibility(true)
+            viewBinding.playBtn.setImageResource(R.drawable.icon_video_pause)
+        } else if (playbackState == Player.STATE_ENDED) {
+            viewBinding.cover.setVisibility(true)
+            viewBinding.playBtn.setVisibility(true)
+            viewBinding.playBtn.setImageResource(R.drawable.icon_video_play)
+        } else if (playbackState == Player.STATE_BUFFERING) {
+            viewBinding.bufferView.setVisibility(true)
+        }
     }
 }

@@ -26,6 +26,10 @@ fun TextView.setTextVisibility(text: String?, goneWhenNull: Boolean = true) {
     }
 }
 
+fun TextView.setTextColor(condition: Boolean, trueRes: Int, falseRes: Int) {
+    this.setTextColor(context.getColor(if (condition) trueRes else falseRes))
+}
+
 fun ImageView.load(imageUrl: String, callback: (Bitmap) -> Unit) {
     Glide.with(this).asBitmap().load(imageUrl).into(object : BitmapImageViewTarget(this) {
         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -48,6 +52,10 @@ fun ImageView.setImageUrl(url: String?, isCircle: Boolean = false) {
         setVisibility(true)
     }
     builder.into(this)
+}
+
+fun ImageView.setImageResource(condition: Boolean, trueRes: Int, falseRes: Int) {
+    setImageResource(if (condition) trueRes else falseRes)
 }
 
 fun ImageView.setBlurImageUrl(blurUrl: String, radius: Int) {
