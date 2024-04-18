@@ -41,6 +41,8 @@ dependencies {
     implementation androidxLibs.bundles.androidx
     implementation androidxLibs.bundles.http
     implementation androidxLibs.bundles.exoplayer
+    // glide
+    implementation androidxLibs.bundles.glide
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

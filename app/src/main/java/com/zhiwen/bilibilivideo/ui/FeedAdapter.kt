@@ -1,19 +1,34 @@
 package com.zhiwen.bilibilivideo.ui
 
+import android.graphics.drawable.ColorDrawable
+import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.coroutineScope
 import androidx.paging.PagingDataAdapter
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.zhiwen.bilibilivideo.R
 import com.zhiwen.bilibilivideo.databinding.*
+import com.zhiwen.bilibilivideo.exoplayer.WrapperPlayerView
+import com.zhiwen.bilibilivideo.ext.load
 import com.zhiwen.bilibilivideo.ext.setImageUrl
 import com.zhiwen.bilibilivideo.ext.setTextVisibility
+import com.zhiwen.bilibilivideo.ext.setVisibility
 import com.zhiwen.bilibilivideo.model.*
+import com.zhiwen.bilibilivideo.util.PixUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: DiffUtil.ItemCallback<Feed>() {
+class FeedAdapter constructor(private val lifecycleOwner: LifecycleOwner
+):PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: DiffUtil.ItemCallback<Feed>() {
     override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
         return oldItem.itemId == newItem.itemId
     }
@@ -30,13 +45,31 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
 
     //
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        val feed = getItem(position) ?: return
-        holder.bindFeedAuthor(feed.author)
-        holder.bindFeedContent(feed.feedsText)
-        holder.bindFeedImage(feed.cover)
-        holder.bindFeedComment(feed.topComment)
-        holder.bindFeedLabel(feed.activityText)
-        holder.bindFeedInteraction(feed.ugc)
+        val feedItem = getItem(position) ?: return
+        holder.bindFeedAuthor(feedItem.author)
+        holder.bindFeedContent(feedItem.itemType.toString() + feedItem.feedsText)
+
+        if (!holder.isVideo()) {
+            holder.bindFeedImage(
+                feedItem.width,
+                feedItem.height,
+                PixUtil.dp2px(300),
+                feedItem.cover
+            )
+        } else {
+            holder.bindVideoData(
+                feedItem.width,
+                feedItem.height,
+                PixUtil.dp2px(300),
+                feedItem.cover,
+                feedItem.url
+            )
+        }
+
+//        holder.bindFeedImage(feedItem.cover)
+        holder.bindFeedComment(feedItem.topComment)
+        holder.bindFeedLabel(feedItem.activityText)
+        holder.bindFeedInteraction(feedItem.ugc)
     }
 
     //
@@ -70,6 +103,7 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
             LayoutFeedTopCommentBinding.bind(itemView.findViewById(R.id.feed_comment))
         private val interactionBinding =
             LayoutFeedInteractionBinding.bind(itemView.findViewById(R.id.feed_interaction))
+        private val playerView: WrapperPlayerView? = itemView.findViewById(R.id.feed_video)
 
         fun bindFeedAuthor(author: Author?) {
             authorBinding.authorName.text = author?.name
@@ -82,6 +116,50 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
 
         fun bindFeedImage(cover: String?) {
             feedImage?.setImageUrl(cover)
+        }
+
+        fun bindFeedImage(width: Int, height: Int, maxHeight: Int, cover: String?) {
+            if (feedImage == null || TextUtils.isEmpty(cover)) {
+                feedImage?.visibility = View.GONE
+                return
+            }
+            val feedItem = getItem(layoutPosition) ?: return
+            feedImage.visibility = View.VISIBLE
+            feedImage.load(cover!!) {
+                if (width <= 0 && height <= 0) {
+                    setFeedImageSize(it.width, it.height, maxHeight)
+                }
+                if (feedItem.backgroundColor == 0) {
+                    lifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.IO) {
+                        val defaultColor = feedImage.context.getColor(R.color.color_theme_10)
+                        val color = Palette.Builder(it).generate().getMutedColor(defaultColor)
+                        feedItem.backgroundColor = color
+                        withContext(lifecycleOwner.lifecycle.coroutineScope.coroutineContext) {
+                            feedImage.background = ColorDrawable(feedItem.backgroundColor)
+                        }
+                    }
+                } else {
+                    feedImage.background = ColorDrawable(feedItem.backgroundColor)
+                }
+            }
+
+            if (width > 0 && height > 0) {
+                setFeedImageSize(width, height, maxHeight)
+            }
+        }
+
+        fun bindVideoData(width: Int, height: Int, maxHeight: Int, cover: String?, url: String?) {
+            url?.run {
+                playerView?.run {
+                    setVisibility(true)
+                    bindData(width, height, cover, url, maxHeight)
+//                    setListener(object : WrapperPlayerView.Listener {
+//                        override fun onTogglePlay(attachView: WrapperPlayerView) {
+//                            playDetector.togglePlay(attachView, url)
+//                        }
+//                    })
+                }
+            }
         }
 
         fun bindFeedLabel(activityText: String?) {
@@ -109,6 +187,25 @@ class FeedAdapter:PagingDataAdapter<Feed,FeedAdapter.FeedViewHolder>(object: Dif
                 interactionBinding.interactionDiss.setIconResource(if (hasdiss) R.drawable.icon_cell_dissed else R.drawable.icon_cell_diss)
                 interactionBinding.interactionDiss.setIconTintResource(if (hasLiked) R.color.color_theme else R.color.color_3d3)
             }
+        }
+
+        fun isVideo(): Boolean {
+            return getItem(layoutPosition)?.itemType == TYPE_VIDEO
+        }
+
+        private fun setFeedImageSize(width: Int, height: Int, maxHeight: Int) {
+            val finalWidth: Int = PixUtil.getScreenWidth();
+            val finalHeight: Int = if (width > height) {
+                (height / (width * 1.0f / finalWidth)).toInt()
+            } else {
+                maxHeight
+            }
+            val params = feedImage!!.layoutParams as LinearLayout.LayoutParams
+            params.width = finalWidth
+            params.height = finalHeight
+            params.gravity = Gravity.CENTER
+            feedImage.scaleType = ImageView.ScaleType.FIT_CENTER
+            feedImage.layoutParams = params
         }
     }
 

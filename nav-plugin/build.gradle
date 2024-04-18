@@ -9,8 +9,7 @@ java {
 }
 
 dependencies {
-
     implementation gradleApi()
     implementation androidxLibs.bundles.nav.plugin
-//    implementation 'com.techme.jetpack:nav-plugin-runtime:1.0.0'
+    implementation 'com.zhiwen.jetpack:nav-plugin-runtime:1.0.0'
 }

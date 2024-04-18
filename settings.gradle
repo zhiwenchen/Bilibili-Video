@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
         gradlePluginPortal()
     }
 }
@@ -11,6 +12,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
     versionCatalogs {
         create('androidxLibs') {
@@ -33,7 +35,8 @@ dependencyResolutionManagement {
             // retrofit + okHttp3 = 网络库依赖
             library('glide','com.github.bumptech.glide','glide').version('4.15.0')
             library('glide-compiler','com.github.bumptech.glide','compiler').version('4.15.0')
-//            library('glide-transformations','jp.wasabeef','glide-transformations').version('4.0.0')
+            library('glide-transformations','jp.wasabeef','glide-transformations').version('4.3.0')
+            bundle('glide',['glide','glide-transformations'])
 
             library('retrofit', 'com.squareup.retrofit2', 'retrofit').version('2.9.0')
             library('converter-gson', 'com.squareup.retrofit2', 'converter-gson').version('2.9.0')
@@ -79,5 +82,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BiliBili Video"
 include ':app'
+include ':nav-plugin'
+include ':nav-plugin-runtime'
 include ':nav-plugin'
 include ':nav-plugin-runtime'

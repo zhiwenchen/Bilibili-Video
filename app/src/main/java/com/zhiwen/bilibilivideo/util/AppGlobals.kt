@@ -2,9 +2,9 @@ package com.zhiwen.bilibilivideo.util
 
 import android.app.Application
 
-private var sApplication: Application? = null
-
 object AppGlobals {
+    private var sApplication: Application? = null
+
     fun getApplication(): Application {
         if (sApplication == null) {
             kotlin.runCatching {

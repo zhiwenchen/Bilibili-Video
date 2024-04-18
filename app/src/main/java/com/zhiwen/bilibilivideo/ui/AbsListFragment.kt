@@ -40,7 +40,7 @@ open class AbsListFragment : Fragment() {
         val context = requireContext()
         viewBinding.listView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         viewBinding.listView.addItemDecoration(DividerItemDecoration(context,DividerItemDecoration.VERTICAL))
-        feedAdapter = FeedAdapter()
+        feedAdapter = FeedAdapter(viewLifecycleOwner)
         viewBinding.listView.adapter = feedAdapter.withLoadStateFooter(FooterLoadStateAdapter())
         viewBinding.refreshLayout.setOnRefreshListener {
             lifecycleScope.launch {
